@@ -1,0 +1,13 @@
+layout tall
+
+new_tab Bash
+cd /home/cody/workspaces/github/CodyBense/goeather
+launch bash
+
+new_tab Files
+cd /home/cody/workspaces/github/CodyBense/goeather
+launch yazi
+
+new_tab Monitor
+cd /home/cody/workspaces/github/CodyBense/goeather
+launch btop
