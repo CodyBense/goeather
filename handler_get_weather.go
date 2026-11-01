@@ -4,12 +4,15 @@ import (
 	"net/http"
 
 	"github.com/CodyBense/goeather/internal/api"
+	"github.com/CodyBense/goeather/internal/json"
 )
 
 // handlerWeatherGet ...
 func (cfg *apiConfig) handlerWeatherGet(w http.ResponseWriter, r *http.Request) {
 	weather, err := api.GetWeather(cfg.apiKey)
-	respondWithError(w, http.StatusInternalServerError, "Couldn't get weather")
+	if err != nil {
+		json.RespondWithError(w, http.StatusInternalServerError, "Couldn't get weather", err)
+	}
 
-	respondWithJson(w, http.StatusOK, weather)
+	json.RespondWithJson(w, http.StatusOK, weather)
 }

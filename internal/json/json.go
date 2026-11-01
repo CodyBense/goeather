@@ -1,4 +1,4 @@
-package main
+package json
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-// respondWithError Returns the error in JSON format
-func respondWithError(w http.ResponseWriter, code int, msg string, err error) {
+// RespondWithError Returns the error in JSON format
+func RespondWithError(w http.ResponseWriter, code int, msg string, err error) {
 	if err != nil {
 		log.Println(err)
 	}
@@ -20,14 +20,14 @@ func respondWithError(w http.ResponseWriter, code int, msg string, err error) {
 		Error string `json:"error"`
 	}
 
-	respondWithJson(w, code, errorResponse{
+	RespondWithJson(w, code, errorResponse{
 		Error: msg,
 	})
 
 }
 
-// respondWithJson Returns the payload in JSON format
-func respondWithJson(w http.ResponseWriter, code int, payload interface{}) {
+// RespondWithJson Returns the payload in JSON format
+func RespondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "appliction/json")
 	dat, err := json.Marshal(payload)
 	if err != nil {

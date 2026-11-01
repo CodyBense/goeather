@@ -2,21 +2,47 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
-	"github.com/CodyBense/goeather/api"
+	// "github.com/CodyBense/goeather/internal/api"
 	"github.com/joho/godotenv"
 )
 
+type apiConfig struct {
+	apiKey string
+}
+
 func main() {
+	const filePathRoot = "."
+	const port = "8000"
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
 
-	apiKey := os.Getenv("METEOSOURCE_API_KEY")
+	meteoKey := os.Getenv("METEOSOURCE_API_KEY")
+	if meteoKey == "" {
+		log.Fatalf("METEOSOURCE_API_KEY must be set")
+	}
 
-	weather, _ := api.GetWeather(apiKey)
+	apiCfg := apiConfig{
+		apiKey: meteoKey,
+	}
 
-	api.PrintWeather(weather)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /api/weather", apiCfg.handlerWeatherGet)
+
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: mux,
+	}
+
+	log.Printf("Serving on port: %s\n", port)
+	log.Fatal(srv.ListenAndServe())
+	// weather, _ := api.GetWeather(apiKey)
+
+	// api.PrintWeather(weather)
 }
