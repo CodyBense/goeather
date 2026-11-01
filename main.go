@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	// "github.com/CodyBense/goeather/internal/api"
 	"github.com/joho/godotenv"
 )
 
@@ -17,7 +16,7 @@ func main() {
 	const filePathRoot = "."
 	const port = "8000"
 
-	err := godotenv.Load()
+	err := godotenv.Load("/home/cody/workspaces/github/CodyBense/goeather/.env")
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
@@ -42,7 +41,4 @@ func main() {
 
 	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(srv.ListenAndServe())
-	// weather, _ := api.GetWeather(apiKey)
-
-	// api.PrintWeather(weather)
 }
