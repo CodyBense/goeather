@@ -1,18 +1,30 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/CodyBense/goeather/internal/api"
-	"github.com/CodyBense/goeather/internal/json"
+	"github.com/CodyBense/goeather/internal/cjson"
 )
 
 // handlerWeatherGet ...
 func (cfg *apiConfig) handlerWeatherGet(w http.ResponseWriter, r *http.Request) {
-	weather, err := api.GetWeather(cfg.apiKey)
-	if err != nil {
-		json.RespondWithError(w, http.StatusInternalServerError, "Couldn't get weather", err)
+	type parameters struct {
+		ApiKey string `json:"api_key"`
 	}
 
-	json.RespondWithJson(w, http.StatusOK, weather)
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+	err := decoder.Decode(&params)
+	if err != nil {
+		cjson.RespondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters", err)
+	}
+
+	weather, err := api.GetWeather(params.ApiKey)
+	if err != nil {
+		cjson.RespondWithError(w, http.StatusInternalServerError, "Couldn't get weather", err)
+	}
+
+	cjson.RespondWithJson(w, http.StatusOK, weather)
 }
