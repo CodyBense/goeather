@@ -8,7 +8,7 @@ import (
 	"github.com/CodyBense/goeather/internal/cjson"
 )
 
-// handlerWeatherGet ...
+// handlerWeatherGetHourl ...
 func (cfg *apiConfig) handlerWeatherGet(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		ApiKey string `json:"api_key"`
@@ -23,7 +23,7 @@ func (cfg *apiConfig) handlerWeatherGet(w http.ResponseWriter, r *http.Request) 
 
 	weather, err := api.GetWeather(params.ApiKey)
 	if err != nil {
-		cjson.RespondWithError(w, http.StatusInternalServerError, "Couldn't get weather", err)
+		cjson.RespondWithError(w, http.StatusInternalServerError, "Couldn't get hourly weather", err)
 	}
 
 	cjson.RespondWithJson(w, http.StatusOK, weather)

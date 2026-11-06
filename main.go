@@ -33,6 +33,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/weather", apiCfg.handlerWeatherGet)
+	mux.HandleFunc("GET /api/weather/current", apiCfg.handlerWeatherGetCurrent)
+	mux.HandleFunc("GET /api/weather/hourly", apiCfg.handlerWeatherGetHourly)
 
 	srv := &http.Server{
 		Addr:    ":" + port,

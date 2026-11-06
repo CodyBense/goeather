@@ -52,7 +52,46 @@ type WeatherResp struct {
 	Daily interface{} `json:"daily"`
 }
 
-// GetWeather Gets the Meteosource API response data and transposes it to a WeatherResp struct
+type WeatherRespCurrent struct {
+	Icon        string  `json:"icon"`
+	IconNum     int     `json:"icon_num"`
+	Summary     string  `json:"summary"`
+	Temperature float64 `json:"temperature"`
+	Wind        struct {
+		Speed float64 `json:"speed"`
+		Angle int     `json:"angle"`
+		Dir   string  `json:"dir"`
+	} `json:"wind"`
+	Precipitation struct {
+		Total float64 `json:"total"`
+		Type  string  `json:"type"`
+	} `json:"precipitation"`
+	CloudCover int `json:"cloud_cover"`
+}
+
+type WeatherRespHourly struct {
+	Data []struct {
+		Date        string  `json:"date"`
+		Weather     string  `json:"weather"`
+		Icon        int     `json:"icon"`
+		Summary     string  `json:"summary"`
+		Temperature float64 `json:"temperature"`
+		Wind        struct {
+			Speed float64 `json:"speed"`
+			Dir   string  `json:"dir"`
+			Angle int     `json:"angle"`
+		} `json:"wind"`
+		CloudCover struct {
+			Total int `json:"total"`
+		} `json:"cloud_cover"`
+		Precipitation struct {
+			Total float64 `json:"total"`
+			Type  string  `json:"type"`
+		} `json:"precipitation"`
+	} `json:"data"`
+}
+
+// GetWeather ...
 func GetWeather(apiKey string) (WeatherResp, error) {
 	var weather WeatherResp
 
@@ -75,6 +114,57 @@ func GetWeather(apiKey string) (WeatherResp, error) {
 	}
 
 	return weather, err
+}
+
+// GetWeather Gets the Meteosource API response data and transposes it to a WeatherResp struct
+func GetWeatherCurrent(apiKey string) (WeatherRespCurrent, error) {
+	var weather WeatherResp
+
+	requestURL := "https://www.meteosource.com/api/v1/free/point?place_id=kingsland&sections=current%2Chourly&language=en&units=us"
+	req, _ := http.NewRequest("GET", requestURL, nil)
+
+	req.Header.Add("X-API-KEY", apiKey)
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		fmt.Errorf("error making request:\nStatus: %s\nError: %w\n", res.Status, err)
+	}
+
+	defer res.Body.Close()
+
+	decoder := json.NewDecoder(res.Body)
+	if err := decoder.Decode(&weather); err != nil {
+		fmt.Printf("error decoding response body\nError: %w\n", err)
+	}
+
+	return weather.Current, err
+}
+
+// GetWeatherHourl ...
+func GetWeatherHourly(apiKey string) (WeatherRespHourly, error) {
+	var weather WeatherResp
+
+	requestURL := "https://www.meteosource.com/api/v1/free/point?place_id=kingsland&sections=current%2Chourly&language=en&units=us"
+	req, _ := http.NewRequest("GET", requestURL, nil)
+
+	req.Header.Add("X-API-KEY", apiKey)
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		fmt.Errorf("Error making request:\nStatus: %s\nError: %w\n", res.Status, err)
+	}
+
+	defer res.Body.Close()
+
+	decoder := json.NewDecoder(res.Body)
+	if err := decoder.Decode(&weather); err != nil {
+		fmt.Printf("Error decoding response body\nError: %w\n", err)
+
+	}
+
+	return weather.Hourly, err
 }
 
 // PrintWeather Pretty prints important Meteosource API response data
